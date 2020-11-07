@@ -1,0 +1,40 @@
+"""Example program to show how to read a multi-channel time series from LSL."""
+
+from pylsl import StreamInlet, resolve_stream
+from pynput import mouse, keyboard
+from pynput.keyboard import Key, Controller
+import numpy as np
+import math
+# first resolve an EEG stream on the lab network
+print("looking for an EEG stream...")
+streams = resolve_stream('type', 'EEG')
+keyboard = Controller()
+
+# create a new inlet to read from the stream
+inlet = StreamInlet(streams[0]) 
+A = -1
+Number = []
+m = 0
+f_result = []
+
+while True:
+	
+	# get a new sample (you can also omit the timestamp part if you're not
+	# interested in it)
+	sample, timestamp = inlet.pull_sample()
+	#print(timestamp,sample)
+	Number.append(sample[2])
+	n = len(Number)
+	#print(n)
+	#print(Number)
+	while(n%50 == 0):
+		s_result = sum(Number[m:m+49])/50
+		m = m+50
+		A += 1
+		print(s_result)
+		
+		#f_result.append(s_result)
+	#pri(f_result[A])
+		if s_result >0.3:
+			keyboard.type('aa')
+		break
